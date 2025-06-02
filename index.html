@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>KN Management 👑</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cairo&display=swap');
+    * {
+      box-sizing: border-box;
+      font-family: 'Cairo', sans-serif;
+    }
+    body {
+      margin: 0;
+      background: #f0f4f8;
+      color: #333;
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+    #sidebar {
+      background: #1e40af; /* أزرق غامق */
+      color: white;
+      width: 280px;
+      min-width: 280px;
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+    }
+    #sidebar h1 {
+      font-size: 24px;
+      margin: 0 0 20px;
+      font-weight: 900;
+      user-select: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    #sidebar h1 span.crown {
+      font-size: 28px;
+      color: gold;
+    }
+    #sidebar button {
+      background: transparent;
+      border: none;
+      color: white;
+      padding: 14px 10px;
+      font-size: 18px;
+      text-align: right;
+      cursor: pointer;
+      border-radius: 6px;
+      margin-bottom: 10px;
+      transition: background 0.3s ease;
+      user-select: none;
+    }
+    #sidebar button:hover,
+    #sidebar button.active {
+      background: #3b82f6;
+    }
+    #sidebar .logout-btn {
+      margin-top: auto;
+      padding: 14px 10px;
+      background: #ef4444;
+      font-weight: bold;
+      border-radius: 6px;
+      transition: background 0.3s ease;
+    }
+    #sidebar .logout-btn:hover {
+      background: #dc2626;
+    }
+
+    #mainContent {
+      flex: 1;
+      overflow-y: auto;
+      padding: 30px 40px;
+      background: white;
+      border-radius: 0 20px 20px 0;
+      box-shadow: 0 0 30px rgb(0 0 0 / 0.1);
+      margin-left: 10px;
+    }
+    h1, h2 {
+      margin-bottom: 20px;
+      color: #1e3a8a;
+    }
+    p {
+      font-size: 18px;
+      line-height: 1.5;
+    }
+
+    /* أزرار */
+    .actionBtn {
+      background: #2563eb;
+      color: white;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 8px;
+      font-size: 17px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+      user-select: none;
+      margin-top: 15px;
+    }
+    .actionBtn:hover {
+      background: #1d4ed8;
+    }
+
+    /* الجداول */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 30px;
+    }
+    table th, table td {
+      padding: 12px 10px;
+      border: 1px solid #ddd;
+      text-align: center;
+      font-size: 16px;
+    }
+    table th {
+      background: #2563eb;
+      color: white;
+      user-select: none;
+    }
+    table tr:nth-child(even) {
+      background: #f9fafb;
+    }
+
+    /* إدخالات النص */
+    input[type="text"],
+    input[type="password"],
+    input[type="number"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 10px 12px;
+      font-size: 16px;
+      border: 1.8px solid #cbd5e1;
+      border-radius: 8px;
+      margin-top: 6px;
+      margin-bottom: 15px;
+      resize: vertical;
+      transition: border-color 0.3s ease;
+    }
+    input[type="text"]:focus,
+    input[type="password"]:focus,
+    input[type="number"]:focus,
+    select:focus,
+    textarea:focus {
+      outline: none;
+      border-color: #2563eb;
+      box-shadow: 0 0 5px #2563ebaa;
+    }
+
+    /* رسائل التنبيه */
+    #messageBox {
+      position: fixed;
+      top: 15px;
+      left: 50%;
+      transform: translateX(-50%);
+      min-width: 300px;
+      background-color: #34d399; /* أخضر */
+      color: white;
+      padding: 12px 20px;
+      border-radius: 10px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+      font-weight: 700;
+      user-select: none;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease;
+      z-index: 9999;
+    }
+    #messageBox.error {
+      background-color: #ef4444; /* أحمر */
+    }
+
+    /* صفحة تسجيل الدخول */
+    #loginForm {
+      max-width: 400px;
+      margin: auto;
+      background: white;
+      padding: 30px 35px;
+      margin-top: 120px;
+      border-radius: 14px;
+      box-shadow: 0 0 40px rgb(0 0 0 / 0.1);
+    }
+    #loginForm h2 {
+      margin-bottom: 30px;
+      color: #1e40af;
+      text-align: center;
+    }
+    #loginForm button {
+      width: 100%;
+      margin-top: 15px;
+    }
+
+    /* أزرار الحظر */
+    .ban-btn {
+      background: #ef4444;
+      border: none;
+      color: white;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 700;
+      transition: background 0.3s ease;
+      user-select: none;
+    }
+    .ban-btn:hover {
+      background: #dc2626;
+    }
+    .unban-btn {
+      background: #22c55e;
+      border: none;
+      color: white;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 700;
+      transition: background 0.3s ease;
+      user-select: none;
+    }
+    .unban-btn:hover {
+      background: #16a34a;
+    }
+
+    /* حقل اختيار الرتبة في تعديل المستخدم */
+    .role-select {
+      padding: 5px 10px;
+      font-size: 15px;
+      border-radius: 6px;
+      border: 1.5px solid #94a3b8;
+      cursor: pointer;
+      user-select: none;
+    }
+  </style>
+</head>
+<body>
+
+<div id="app"></div>
+<div id="messageBox"></div>
+
+<script>
+(() => {
+  const ADMIN_PASSWORD = '112233';
+
+  // عناصر التخزين المحلي
+  const storageKeyUsers = 'kn_users';
+  const storageKeyLogs = 'kn_logs';
+  const storageKeyBans = 'kn_bans';
+
+  // حالة التطبيق الحالية
+  let currentUser = null;
+  let users = JSON.parse(localStorage.getItem(storageKeyUsers)) || [];
+  let logs = JSON.parse(localStorage.getItem(storageKeyLogs)) || [];
+  let bans = JSON.parse(localStorage.getItem(storageKeyBans)) || [];
+
+  // عناصر DOM
+  const app = document.getElementById('app');
+  const messageBox = document.getElementById('messageBox');
+
+  // إظهار رسالة تنبيه
+  function showMessage(msg, type = 'success', duration = 2500) {
+    messageBox.textContent = msg;
+    messageBox.className = '';
+    if(type === 'error') messageBox.classList.add('error');
+    messageBox.style.opacity = '1';
+    setTimeout(() => {
+      messageBox.style.opacity = '0';
+    }, duration);
+  }
+
+  // حفظ البيانات في localStorage
+  function saveAll() {
+    localStorage.setItem(storageKeyUsers, JSON.stringify(users));
+    localStorage.setItem(storageKeyLogs, JSON.stringify(logs));
+    localStorage.setItem(storageKeyBans, JSON.stringify(bans));
+  }
+
+  // التحقق من حالة الحظر
+  function isBanned(username) {
+    return bans.includes(username);
+  }
+
+  // تسجيل دخول المستخدم مع التحقق من كلمة السر للادمن فقط
+  function login(username, role, password = '') {
+    if(!username.trim() || !role.trim()) return false;
+    if(role === 'أدمن' && password !== ADMIN_PASSWORD) {
+      showMessage('كلمة سر الأدمن غير صحيحة!', 'error');
+      return false;
+    }
+    if(isBanned(username)) {
+      showMessage('تم حظرك من النظام، لا يمكنك الدخول.', 'error');
+      return false;
+    }
+    currentUser = { username, role, loginTime: Date.now(), points: 0 };
+    // تسجيل الدخول في اللوق
+    logs.push({
+      type: 'دخول',
+      username,
+      role,
+      time: new Date().toLocaleString()
+    });
+    // إضافة المستخدم إلى قائمة إذا غير موجود
+    if(!users.find(u => u.username === username)) {
+      users.push({ username, role, points: 0 });
+    } else {
+      // تحديث الرتبة في حال تغيرت
+      const user = users.find(u => u.username === username);
+      user.role = role;
+    }
+    saveAll();
+    return true;
+  }
+
+  // تسجيل خروج المستخدم
+  function logout() {
+    if(!currentUser) return;
+    // حساب الوقت بالفترة وإعطاء نقاط (نقطة لكل ساعتين)
+    const sessionTimeMs = Date.now() - currentUser.loginTime;
+    const hours = sessionTimeMs / (1000 * 3600);
+    const earnedPoints = Math.floor(hours / 2);
+    currentUser.points += earnedPoints;
+
+    // تحديث المستخدم في القائمة
+    const user = users.find(u => u.username === currentUser.username);
+    if(user) {
+      user.points = (user.points || 0) + earnedPoints;
+      user.role = currentUser.role; // تأكيد الرتبة
+    }
+
+    // تسجيل الخروج في اللوق
+    logs.push({
+      type: 'خروج',
+      username: currentUser.username,
+      role: currentUser.role,
+      time: new Date().toLocaleString()
+    });
+
+    saveAll();
+    currentUser = null;
+  }
+
+  // تقديم إجازة
+  function submitLeave(reason, duration) {
+    if(!currentUser) return false;
+    if(reason.length < 3 || isNaN(duration) || duration < 1) return false;
+
+    logs.push({
+      type: 'إجازة',
+      username: currentUser.username,
+      role: currentUser.role,
+      reason,
+      duration,
+      time: new Date().toLocaleString()
+    });
+    saveAll();
+    return true;
+  }
+
+  // حظر مستخدم
+  function banUser(username) {
+    if(!bans.includes(username)) bans.push(username);
+    saveAll();
+  }
+  // رفع الحظر
+  function unbanUser(username) {
+    bans = bans.filter(u => u !== username);
+    saveAll();
+  }
+
+  // تغيير رتبة مستخدم (للاادمن فقط)
+  function changeUserRole(username, newRole) {
+    if(currentUser.role !== 'أدمن') {
+      showMessage('ليس لديك صلاحية تغيير الرتب', 'error');
+      return false;
+    }
+    const user = users.find(u => u.username === username);
+    if(user) {
+      user.role = newRole;
+      saveAll();
+      showMessage(`تم تغيير رتبة ${username} إلى ${newRole}`, 'success');
+      return true;
+    }
+    return false;
+  }
+
+  // تحديث النقاط في الصفحة الرئيسية
+  function updatePoints() {
+    if(!currentUser) return;
+    // تحديث نقاط الجلسة حسب الوقت الحالي
+    const sessionTimeMs = Date.now() - currentUser.loginTime;
+    const hours = sessionTimeMs / (1000 * 3600);
+    const earnedPoints = Math.floor(hours / 2);
+    currentUser.points = (users.find(u => u.username === currentUser.username)?.points || 0) + earnedPoints;
+  }
+
+  // === عرض الصفحات ===
+
+  // صفحة تسجيل الدخول
+  function renderLogin() {
+    app.innerHTML = `
+      <form id="loginForm" autocomplete="off" onsubmit="return false;">
+        <h2>KN Management 👑</h2>
+        <label>اسم المستخدم:</label>
+        <input type="text" id="loginUsername" placeholder="أدخل اسم المستخدم" required />
+
+        <label>الرتبة:</label>
+        <select id="loginRole" required>
+          <option value="" disabled selected>اختر رتبتك</option>
+          <option value="عضو">عضو</option>
+          <option value="مشرف">مشرف</option>
+          <option value="أدمن">أدمن</option>
+        </select>
+
+        <div id="adminPasswordDiv" style="display:none;">
+          <label>كلمة سر الأدمن:</label>
+          <input type="password" id="loginAdminPassword" placeholder="كلمة سر الأدمن" />
+        </div>
+
+        <button type="submit" class="actionBtn">تسجيل الدخول</button>
+      </form>
+    `;
+
+    const roleSelect = document.getElementById('loginRole');
+    const adminPassDiv = document.getElementById('adminPasswordDiv');
+    const loginForm = document.getElementById('loginForm');
+
+    roleSelect.onchange = () => {
+      if(roleSelect.value === 'أدمن') {
+        adminPassDiv.style.display = 'block';
+      } else {
+        adminPassDiv.style.display = 'none';
+      }
+    };
+
+    loginForm.onsubmit = () => {
+      const username = document.getElementById('loginUsername').value.trim();
+      const role = document.getElementById('loginRole').value;
+      const password = document.getElementById('loginAdminPassword').value;
+      if(login(username, role, password)) {
+        showMessage('تم تسجيل الدخول بنجاح');
+        renderApp('dashboard');
+      }
+      return false;
+    };
+  }
+
+  // القائمة الجانبية
+  function renderSidebar(activePage) {
+    if(!currentUser) return '';
+    return `
+      <div id="sidebar">
+        <h1>KN Management <span class="crown">👑</span></h1>
+        <button data-page="dashboard" class="${activePage === 'dashboard' ? 'active' : ''}">الرئيسية</button>
+        <button data-page="leave" class="${activePage === 'leave' ? 'active' : ''}">تقديم إجازة</button>
+        <button data-page="logs" class="${activePage === 'logs' ? 'active' : ''}">سجلات الدخول والخروج</button>
+        ${(currentUser.role === 'أدمن' || currentUser.role === 'مشرف') ? `<button data-page="users" class="${activePage === 'users' ? 'active' : ''}">إدارة المستخدمين</button>` : ''}
+        ${(currentUser.role === 'أدمن' || currentUser.role === 'مشرف') ? `<button data-page="bans" class="${activePage === 'bans' ? 'active' : ''}">المستخدمون المحظورون</button>` : ''}
+        <button id="logoutBtnSidebar" class="logout-btn">تسجيل خروج</button>
+      </div>
+    `;
+  }
+
+  // صفحة الرئيسية
+  function renderDashboard() {
+    updatePoints();
+    const { username, role, points } = currentUser;
+    return `
+      <h1>مرحباً، ${username}!</h1>
+      <p><strong>رتبتك:</strong> ${role}</p>
+      <p><strong>نقاطك المكتسبة:</strong> ${points}</p>
+      <p>يمكنك تقديم طلب إجازة من القائمة الجانبية.</p>
+    `;
+  }
+
+  // صفحة تقديم الإجازة
+  function renderLeave() {
+    return `
+      <h2>تقديم إجازة</h2>
+      <label>السبب:</label>
+      <textarea id="leaveReason" rows="4" placeholder="اكتب سبب الإجازة هنا..." required></textarea>
+
+      <label>مدة الإجازة (بالأيام):</label>
+      <input type="number" id="leaveDuration" min="1" value="1" required />
+
+      <button class="actionBtn" id="submitLeaveBtn">تقديم الإجازة</button>
+    `;
+  }
+
+  // صفحة سجلات الدخول والخروج والإجازات
+  function renderLogs() {
+    if(!(currentUser.role === 'أدمن' || currentUser.role === 'مشرف')) {
+      return `<p style="color:#dc2626; font-weight:bold;">ليس لديك صلاحية عرض السجلات.</p>`;
+    }
+    if(logs.length === 0) return `<p>لا توجد سجلات حتى الآن.</p>`;
+
+    // تصنيف السجلات حسب النوع مع ألوان مختلفة
+    function logRow(log) {
+      let details = '';
+      if(log.type === 'إجازة') {
+        details = `سبب: ${log.reason} - مدة: ${log.duration} يوم`;
+      }
+      return `
+        <tr>
+          <td>${log.type}</td>
+          <td>${log.username}</td>
+          <td>${log.role}</td>
+          <td>${details}</td>
+          <td>${log.time}</td>
+        </tr>
+      `;
+    }
+
+    return `
+      <h2>سجلات الدخول والخروج والإجازات</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>النوع</th>
+            <th>المستخدم</th>
+            <th>الرتبة</th>
+            <th>التفاصيل</th>
+            <th>الوقت</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${logs.map(logRow).join('')}
+        </tbody>
+      </table>
+    `;
+  }
+
+  // صفحة إدارة المستخدمين (تغيير الرتب والحظر)
+  function renderUsers() {
+    if(currentUser.role !== 'أدمن' && currentUser.role !== 'مشرف') {
+      return `<p style="color:#dc2626; font-weight:bold;">ليس لديك صلاحية عرض هذه الصفحة.</p>`;
+    }
+    if(users.length === 0) return `<p>لا يوجد مستخدمون مسجلون.</p>`;
+
+    function userRow(user) {
+      const isBannedUser = isBanned(user.username);
+      const canChangeRole = currentUser.role === 'أدمن';
+      const roleOptions = ['عضو', 'مشرف', 'أدمن'].map(r => {
+        return `<option value="${r}" ${r === user.role ? 'selected' : ''}>${r}</option>`;
+      }).join('');
+
+      return `
+        <tr>
+          <td>${user.username}</td>
+          <td>
+            ${canChangeRole ? `<select class="role-select" data-username="${user.username}">${roleOptions}</select>` : user.role}
+          </td>
+          <td>${user.points || 0}</td>
+          <td>
+            ${isBannedUser ? 
+              `<button class="unban-btn" data-username="${user.username}">رفع الحظر</button>` : 
+              `<button class="ban-btn" data-username="${user.username}">حظر</button>`
+            }
+          </td>
+        </tr>
+      `;
+    }
+
+    return `
+      <h2>إدارة المستخدمين</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>اسم المستخدم</th>
+            <th>الرتبة</th>
+            <th>النقاط</th>
+            <th>الحظر</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${users.map(userRow).join('')}
+        </tbody>
+      </table>
+    `;
+  }
+
+  // صفحة المستخدمون المحظورون
+  function renderBans() {
+    if(currentUser.role !== 'أدمن' && currentUser.role !== 'مشرف') {
+      return `<p style="color:#dc2626; font-weight:bold;">ليس لديك صلاحية عرض هذه الصفحة.</p>`;
+    }
+    if(bans.length === 0) return `<p>لا يوجد مستخدمون محظورون.</p>`;
+
+    return `
+      <h2>المستخدمون المحظورون</h2>
+      <ul>
+        ${bans.map(username => `
+          <li>
+            ${username} 
+            <button class="unban-btn" data-username="${username}">رفع الحظر</button>
+          </li>
+        `).join('')}
+      </ul>
+    `;
+  }
+
+  // عرض الصفحة الرئيسية مع الشريط الجانبي
+  function renderApp(page = 'dashboard') {
+    if(!currentUser) {
+      renderLogin();
+      return;
+    }
+    app.innerHTML = `
+      ${renderSidebar(page)}
+      <main id="mainContent"></main>
+    `;
+
+    const mainContent = document.getElementById('mainContent');
+
+    switch(page) {
+      case 'dashboard':
+        mainContent.innerHTML = renderDashboard();
+        break;
+      case 'leave':
+        mainContent.innerHTML = renderLeave();
+        break;
+      case 'logs':
+        mainContent.innerHTML = renderLogs();
+        break;
+      case 'users':
+        mainContent.innerHTML = renderUsers();
+        break;
+      case 'bans':
+        mainContent.innerHTML = renderBans();
+        break;
+      default:
+        mainContent.innerHTML = `<p>الصفحة غير موجودة</p>`;
+    }
+
+    // الأحداث
+    // التنقل في الشريط الجانبي
+    document.querySelectorAll('#sidebar button[data-page]').forEach(btn => {
+      btn.onclick = () => {
+        renderApp(btn.getAttribute('data-page'));
+      };
+    });
+
+    // تسجيل الخروج
+    document.getElementById('logoutBtnSidebar').onclick = () => {
+      logout();
+      showMessage('تم تسجيل الخروج بنجاح');
+      renderLogin();
+    };
+
+    // تقديم إجازة
+    const submitLeaveBtn = document.getElementById('submitLeaveBtn');
+    if(submitLeaveBtn) {
+      submitLeaveBtn.onclick = () => {
+        const reason = document.getElementById('leaveReason').value.trim();
+        const duration = parseInt(document.getElementById('leaveDuration').value, 10);
+        if(submitLeave(reason, duration)) {
+          showMessage('تم تقديم طلب الإجازة بنجاح');
+          renderApp('leave');
+        } else {
+          showMessage('يرجى إدخال سبب ومدة صحيحة للإجازة', 'error');
+        }
+      };
+    }
+
+    // إدارة المستخدمين
+    if(page === 'users') {
+      // تغيير رتبة المستخدم
+      document.querySelectorAll('.role-select').forEach(select => {
+        select.onchange = (e) => {
+          const username = e.target.getAttribute('data-username');
+          const newRole = e.target.value;
+          changeUserRole(username, newRole);
+        };
+      });
+      // حظر ورفع حظر
+      document.querySelectorAll('.ban-btn').forEach(btn => {
+        btn.onclick = () => {
+          const username = btn.getAttribute('data-username');
+          if(username === currentUser.username) {
+            showMessage('لا يمكنك حظر نفسك!', 'error');
+            return;
+          }
+          banUser(username);
+          showMessage(`تم حظر المستخدم ${username}`);
+          renderApp('users');
+        };
+      });
+      document.querySelectorAll('.unban-btn').forEach(btn => {
+        btn.onclick = () => {
+          const username = btn.getAttribute('data-username');
+          unbanUser(username);
+          showMessage(`تم رفع الحظر عن المستخدم ${username}`);
+          renderApp('users');
+        };
+      });
+    }
+
+    // صفحة المستخدمون المحظورون
+    if(page === 'bans') {
+      document.querySelectorAll('.unban-btn').forEach(btn => {
+        btn.onclick = () => {
+          const username = btn.getAttribute('data-username');
+          unbanUser(username);
+          showMessage(`تم رفع الحظر عن المستخدم ${username}`);
+          renderApp('bans');
+        };
+      });
+    }
+  }
+
+  // بداية التطبيق
+  renderLogin();
+
+})();
+</script>
+
+</body>
+</html>

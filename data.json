@@ -1,0 +1,58 @@
+{
+  "users": [
+    {
+      "username": "kon",
+      "role": "أدمن",
+      "points": 0,
+      "isLoggedIn": false,
+      "loginTime": null
+    },
+    {
+      "username": "gfdgf",
+      "role": "أدمن",
+      "points": 0,
+      "isLoggedIn": false,
+      "loginTime": null
+    }
+  ],
+  "logs": [
+    {
+      "username": "kon",
+      "action": "دخول",
+      "time": 1748843738812
+    },
+    {
+      "username": "kon",
+      "action": "خروج",
+      "time": 1748843744484,
+      "gainedPoints": 0
+    },
+    {
+      "username": "gfdgf",
+      "action": "دخول",
+      "time": 1748843748677
+    },
+    {
+      "username": "gfdgf",
+      "action": "طلب إجازة",
+      "time": 1748843755349,
+      "reason": "gdgd",
+      "duration": 3
+    },
+    {
+      "username": "gfdgf",
+      "action": "خروج",
+      "time": 1748843761590,
+      "gainedPoints": 0
+    }
+  ],
+  "leaves": [
+    {
+      "username": "gfdgf",
+      "reason": "gdgd",
+      "duration": 3,
+      "date": 1748843755349
+    }
+  ],
+  "banned": []
+}
